@@ -278,7 +278,7 @@ const processVerification = async (req, res) => {
       console.log("createVoiceVerificationByUrl: ", jsonResponse.message);
 
       if (jsonResponse.responseCode == "SUCC") {
-        speak(twiml, 'Verification successful!');
+        speak(twiml, 'Verification successful! for user '+userId);
         speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
         //Hang up
       } else if (numTries > 2) {
