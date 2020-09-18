@@ -6,7 +6,7 @@ const config = {
   // dataBaseURL:  process.env.DATABASE_URL | "mongodb://localhost:27019/localmachine"
   apiKey :"key_0e1554454e0f48479255a7a5be76bc74",
   apiToken :"tok_4740ac55f56e43f2ba2f302b138fcf81",
-  contentLanguage:"en-US",
+  contentLanguage:"en-IN",
   chosenVoicePrintPhrase:"Hello I am very happy today"
 }
 
