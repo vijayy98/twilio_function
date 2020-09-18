@@ -7,7 +7,7 @@ const config = {
   apiKey :"key_0e1554454e0f48479255a7a5be76bc74",
   apiToken :"tok_4740ac55f56e43f2ba2f302b138fcf81",
   contentLanguage:"en-IN",
-  chosenVoicePrintPhrase:"Hello I am very happy today"
+  chosenVoicePrintPhrase:"Never forget tomorrow is a new day"
 }
 
 module.exports = config;
