@@ -58,13 +58,13 @@ const callerUserId = async (phone) => {
     let user = await User.findOne({ phone });
 
             if (user) {
-                return 0;
+                return user.userId;
             }
 
     // Check for user in db
-    if (Object.keys(result.rows).length !== 0) {
-      return result.rows[0].userid;
-    }
+    // if (Object.keys(result.rows).length !== 0) {
+    //   return result.rows[0].userid;
+    // }
   } catch (err) {
       console.error(err);
   }
