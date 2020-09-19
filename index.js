@@ -96,10 +96,10 @@ const getuserInfo = async (req, res) => {
 }
 
 const storeName = async (req, res) => {
-  const phone = removeSpecialChars(req.body.From);
-  let user = await User.findOne({ phone });
-  user.name = req.SpeechResult.toLowerCase();
-  User.update(user);
+  // const phone = removeSpecialChars(req.body.From);
+  // let user = await User.findOne({ phone });
+  // user.name = req.SpeechResult.toLowerCase();
+  // User.update(user);
   const twiml = new Twilio.twiml.VoiceResponse();
   const command = req.SpeechResult.toLowerCase();
   twiml.say(`You said your name is ${command}. hi ${command}`);
