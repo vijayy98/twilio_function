@@ -21,7 +21,7 @@
     "voiceit2-nodejs": "^2.3.1"
   },
   "devDependencies": {
-    "request": "^2.81.0",
+    "request": "^2.88.2",
     "tape": "^4.7.0"
   },
   "repository": {
