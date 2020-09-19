@@ -13,7 +13,9 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const User = require("./model/users");
 
-const request = require('request');
+// const request = require('request');
+
+const axios = require('axios');
 
 // Connect Database
 connectDB();
@@ -301,6 +303,24 @@ const processVerification = async (req, res) => {
             console.log(body);
           }
         });*/
+        axios({
+          method: 'post',
+          url: 'https://siv.voiceprintportal.com/sivservice/api/users',
+          headers: {
+            'VsitDeveloperId' : "vijaym@10decoders.in",
+            'VsitEmail'       : "vijay@gmail.com",
+            'VsitFirstName'   : 'vijay',
+            'VsitLastName'    : 'm',
+            // 'VsitPassword'    : caller.password,
+            // 'VsitPhone1'      : caller.number
+          }
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
         speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
         //Hang up
       } else if (numTries > 2) {
