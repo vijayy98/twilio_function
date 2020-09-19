@@ -87,11 +87,11 @@ const getAllUsers = async (req,res) => {
 }
 
 const getuserInfo = async (req, res) => {
-  console.log("getuserInfo ----->", req);
+  // console.log("getuserInfo ----->", req);
   console.log("getuserInfo body ----->", req.body);
   console.log("getuserInfo res ----->", res);
   console.log("getuserInfo res body ---->", res.body);
-  const twiml = VoiceResponse();
+  const twiml = new VoiceResponse();
   const gather = twiml.gather({
     input: 'speech',
     // hints: 'cat, numbers, chuck',
@@ -108,7 +108,7 @@ const storeName = async (req, res) => {
   console.log("storeName res ----->", res);
   console.log("storeName res body ---->", res.body);
 
-  const twiml = VoiceResponse();
+  const twiml = new VoiceResponse();
   const command = req.body.SpeechResult.toLowerCase();
   twiml.say(`You said ${command}. I'll give you a ${command} fact.`);
 
