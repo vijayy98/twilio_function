@@ -87,14 +87,11 @@ const getAllUsers = async (req,res) => {
 }
 
 const getuserInfo = async (req, res) => {
-  // console.log("getuserInfo ----->", req);
   console.log("getuserInfo body ----->", req.body);
   console.log("getuserInfo res ----->", res);
-  // console.log("getuserInfo res body ---->", res.body);
   const twiml = new VoiceResponse();
   const gather = twiml.gather({
     input: 'speech',
-    // hints: 'cat, numbers, chuck',
     action: '/store_name',
     timeout: 3,
   });
@@ -105,14 +102,20 @@ const getuserInfo = async (req, res) => {
 
 const storeName = async (req, res) => {
 
-  console.log("storeName ----->", req);
+  // console.log("storeName ----->", req);
   console.log("storeName body ----->", req.body);
   console.log("storeName res ----->", res);
-  console.log("storeName res body ---->", res.body);
+  // console.log("storeName res body ---->", res.body);
 
   const twiml = new VoiceResponse();
-  const command = req.body.SpeechResult.toLowerCase();
-  twiml.say(`You said ${command}. I'll give you a ${command} fact.`);
+  const firstName = req.body.SpeechResult.toLowerCase();
+  const phone = removeSpecialChars(req.body.From);
+
+  let user = await User.findOne({ phone });
+  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!'+user.phone);
+  user.name = firstName;
+  await User.update(user);
+  twiml.say(`You said your name is ${firstName}. hai ${firstName} have a nice day`);
   res.type('text/xml');
   res.send(twiml.toString());
 
