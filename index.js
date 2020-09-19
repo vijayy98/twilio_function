@@ -35,7 +35,7 @@ express()
   .post('/verify', (req, res) => verify(req, res))
   .post('/process_verification', (req, res) => processVerification(req, res))
   .post('/enroll_user', (req,res) => getuserInfo(req, res))
-  .post('/store-name', (req, res) => storeName(req, res))
+  .post('/store_name', (req, res) => storeName(req, res))
   .listen(PORT, () => console.log(`Listening on port ${ PORT }`))
 
   // --------------------------------------------
@@ -89,10 +89,12 @@ const getuserInfo = async (req, res) => {
   const twiml = new VoiceResponse();
   const gather = twiml.gather({
     input: 'speech',
-    action: '/store-name',
+    action: '/store_name',
     timeout: 5
   });
   speak(gather, "Please say your name to enroll");
+  res.type('text/xml');
+  res.send(twiml.toString());
 }
 
 const storeName = async (req, res) => {
@@ -100,11 +102,11 @@ const storeName = async (req, res) => {
   // let user = await User.findOne({ phone });
   // user.name = req.SpeechResult.toLowerCase();
   // User.update(user);
-  const twiml = new Twilio.twiml.VoiceResponse();
-  // const command = req.SpeechResult.toLowerCase(); ${command}. hi ${command}
-  speak(twiml, 'You said your name is vijay');
-  // res.type('text/xml');
-  // res.send(twiml.toString());
+  const twiml = new VoiceResponse();
+  const command = req.SpeechResult.toLowerCase();
+  speak(twiml, 'You said your name is '+command+'.hi'+command);
+  res.type('text/xml');
+  res.send(twiml.toString());
 }
 
 const incomingCall = async (req, res) => {
@@ -307,7 +309,7 @@ const processVerification = async (req, res) => {
         const gather = twiml.gather({
           action: '/enroll_user',
           numDigits: 2,
-          timeout: 5
+          timeout: 6
         });
         speak(gather, "You can now log in,before that press two for store user information");
         //Hang up
