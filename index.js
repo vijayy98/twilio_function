@@ -87,11 +87,14 @@ const getAllUsers = async (req,res) => {
 }
 
 const getuserInfo = async (req, res) => {
-  const twiml = new VoiceResponse();
-  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
+  console.log("getuserInfo ----->", req);
+  console.log("getuserInfo body ----->", req.body);
+  console.log("getuserInfo res ----->", res);
+  console.log("getuserInfo res body ---->", res.body);
+  const twiml = VoiceResponse();
   const gather = twiml.gather({
     input: 'speech',
-    hints: 'cat, numbers, chuck',
+    // hints: 'cat, numbers, chuck',
     action: '/store_name',
     timeout: 3,
   });
@@ -100,17 +103,25 @@ const getuserInfo = async (req, res) => {
 
 const storeName = async (req, res) => {
 
-  const twiml = new VoiceResponse();
-  const phone = removeSpecialChars(req.body.From);
+  console.log("storeName ----->", req);
+  console.log("storeName body ----->", req.body);
+  console.log("storeName res ----->", res);
+  console.log("storeName res body ---->", res.body);
+
+  const twiml = VoiceResponse();
+  const command = req.body.SpeechResult.toLowerCase();
+  twiml.say(`You said ${command}. I'll give you a ${command} fact.`);
+
+  /*const phone = removeSpecialChars(req.body.From);
   let user = await User.findOne({ phone });
   speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!'+user.phone);
-  user['name'] = "vijay";
-  user['response'] = JSON.stringify(req.body);
+  user.name = "vijay";
+  user.response = JSON.stringify(req.body);
   await User.update(user);
-  const command = req.SpeechResult.toLowerCase();
+  const command = req.body.SpeechResult.toLowerCase();
   speak(twiml, 'You said your name is '+command+'.hi'+command);
   res.type('text/xml');
-  res.send(twiml.toString());
+  res.send(twiml.toString());*/
 
 }
 
@@ -294,6 +305,12 @@ const verify = async (req, res) => {
 
 // Process Verification
 const processVerification = async (req, res) => {
+  
+  console.log("processVerification ----->", req);
+  console.log("processVerification body ----->", req.body);
+  console.log("processVerification res ----->", res);
+  console.log("processVerification res body ---->", res.body);
+
   const userId = await callerUserId(removeSpecialChars(req.body.From));
   const recordingURL = req.body.RecordingUrl + '.wav';
   const twiml = new VoiceResponse();
@@ -314,7 +331,7 @@ const processVerification = async (req, res) => {
         const gather = twiml.gather({
           action: '/enroll_user',
           numDigits: 2,
-          timeout: 6
+          timeout: 3
         });
         speak(gather, "You can now log in,before that press two for store user information");
         //Hang up
