@@ -12,6 +12,7 @@ const VoiceResponse = twilio.twiml.VoiceResponse;
 const express = require('express')
 const bodyParser = require('body-parser');
 const User = require("./model/users");
+const SpeechResult = require("./model/speech");
 const { json } = require('express');
 
 // Connect Database
@@ -110,12 +111,24 @@ const storeName = async (req, res) => {
   const twiml = new VoiceResponse();
   const firstName = req.body.SpeechResult.toLowerCase();
   const phone = removeSpecialChars(req.body.From);
+  const userId = await callerUserId(phone);
+  try{
 
-  let user = await User.findOne({ phone });
-  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!'+user.phone);
-  user.name = firstName;
-  await User.update(user);
+    speechResult = new SpeechResult({
+        userId : userId,
+        description: firstName
+    });
+    console.log("before save speechResult ---->", speechResult);
+    let speechResult2 =  await speechResult.save();
+    console.log("after save speechResult2 ---->", speechResult2);
+
+  }catch(err){
+    console.error(err);
+    res.send("Error " + err);
+  }
+
   twiml.say(`You said your name is ${firstName}. hai ${firstName} have a nice day`);
+  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
   res.type('text/xml');
   res.send(twiml.toString());
 
