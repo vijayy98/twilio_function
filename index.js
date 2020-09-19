@@ -286,7 +286,7 @@ const processVerification = async (req, res) => {
       if (jsonResponse.responseCode == "SUCC") {
         speak(twiml, 'Verification successful! for user '+userId);
 
-        var options = {
+        /*var options = {
           url: 'https://siv.voiceprintportal.com/sivservice/api/users',
           headers: {
             'VsitDeveloperId' : "key_0e1554454e0f48479255a7a5be76bc74",
@@ -305,7 +305,7 @@ const processVerification = async (req, res) => {
             console.log(response.statusCode);
             console.log(body);
           }
-        });
+        });*/
 
         speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
         //Hang up
