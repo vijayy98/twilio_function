@@ -13,9 +13,9 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const User = require("./model/users");
 
-// const request = require('request');
-
-const axios = require('axios');
+const accountSid = 'AC659c401392a17a2ac766f1c0514709a2';
+const authToken = '6c7a8c067d15195c0ce8f01b2cf53a54';
+const client = require('twilio')(accountSid, authToken);
 
 // Connect Database
 connectDB();
@@ -280,47 +280,13 @@ const processVerification = async (req, res) => {
   	contentLanguage: config.contentLanguage,
   	}, async (jsonResponse)=>{
       console.log("createVoiceVerificationByUrl: ", jsonResponse.message);
-
+      var sid ;
       if (jsonResponse.responseCode == "SUCC") {
         speak(twiml, 'Verification successful! for user '+userId);
-        /*var options = {
-          url: 'https://siv.voiceprintportal.com/sivservice/api/users',
-          headers: {
-            'VsitDeveloperId' : "vijaym@10decoders.in",
-            'VsitEmail'       : "vijay@gmail.com",
-            'VsitFirstName'   : 'vijay',
-            'VsitLastName'    : 'm',
-            // 'VsitPassword'    : caller.password,
-            // 'VsitPhone1'      : caller.number
-          }
-        };
-        request.post(options, function (error, response,  body) {
-          if (!error && response.statusCode == 200) {
-            var voiceIt = JSON.parse(body);
-            console.log(voiceIt);
-          } else {
-            console.log(response.statusCode);
-            console.log(body);
-          }
-        });*/
-        axios({
-          method: 'post',
-          url: 'https://siv.voiceprintportal.com/sivservice/api/users',
-          headers: {
-            'VsitDeveloperId' : "vijaym@10decoders.in",
-            'VsitEmail'       : "vijay@gmail.com",
-            'VsitFirstName'   : 'vijay',
-            'VsitLastName'    : 'm',
-            // 'VsitPassword'    : caller.password,
-            // 'VsitPhone1'      : caller.number
-          }
-        })
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+        client.chat.services.create({friendlyName: 'friendly_name'})
+                    .then(service => sid = service.sid);
+        client.chat.services(sid)
+        .users.create({identity: 'vijay'}).then(speak(twiml,'Api done'));
         speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
         //Hang up
       } else if (numTries > 2) {
