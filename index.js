@@ -12,6 +12,7 @@ const VoiceResponse = twilio.twiml.VoiceResponse;
 const express = require('express')
 const bodyParser = require('body-parser');
 const User = require("./model/users");
+const { json } = require('express');
 
 // Connect Database
 connectDB();
@@ -90,7 +91,7 @@ const getuserInfo = async (req, res) => {
   const gather = twiml.gather({
     input: 'speech',
     action: '/store_name',
-    timeout: 5
+    timeout: 10
   });
   speak(gather, "Please say your name to enroll");
   res.type('text/xml');
@@ -98,10 +99,11 @@ const getuserInfo = async (req, res) => {
 }
 
 const storeName = async (req, res) => {
-  // const phone = removeSpecialChars(req.body.From);
-  // let user = await User.findOne({ phone });
-  // user.name = req.SpeechResult.toLowerCase();
-  // User.update(user);
+  const phone = removeSpecialChars(req.body.From);
+  let user = await User.findOne({ phone });
+  user.name = "vijay";
+  user.response = JSON.stringify(req.body);
+  User.update(user);
   const twiml = new VoiceResponse();
   const command = req.SpeechResult.toLowerCase();
   speak(twiml, 'You said your name is '+command+'.hi'+command);
