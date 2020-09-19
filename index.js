@@ -13,10 +13,6 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const User = require("./model/users");
 
-const accountSid = 'AC659c401392a17a2ac766f1c0514709a2';
-const authToken = '6c7a8c067d15195c0ce8f01b2cf53a54';
-const client = require('twilio')(accountSid, authToken);
-
 // Connect Database
 connectDB();
 
@@ -38,6 +34,8 @@ express()
   .post('/process_enrollment', (req, res) => processEnrollment(req, res))
   .post('/verify', (req, res) => verify(req, res))
   .post('/process_verification', (req, res) => processVerification(req, res))
+  .post('/enroll_user', (req,res) => getuserInfo(req, res))
+  .post('/store-name', (req, res) => storeName(req, res))
   .listen(PORT, () => console.log(`Listening on port ${ PORT }`))
 
   // --------------------------------------------
@@ -85,6 +83,28 @@ const getAllUsers = async (req,res) => {
             console.log("returning users---------------------->",users)
             res.status(200).json(users);
 
+}
+
+const getuserInfo = async (req, res) => {
+  const twiml = new VoiceResponse();
+  twiml.gather({
+    input: 'speech',
+    timeout: 3,
+    // hints: 'cat, numbers, chuck norris',
+    action: '/store-name'
+  }).say('Please say your name to enroll')
+}
+
+const storeName = async (req, res) => {
+  const phone = removeSpecialChars(req.body.From);
+  let user = await User.findOne({ phone });
+  user.name = req.SpeechResult.toLowerCase();
+  User.update(user);
+  const twiml = new Twilio.twiml.VoiceResponse();
+  const command = req.SpeechResult.toLowerCase();
+  twiml.say(`You said your name is ${command}. hi ${command}`);
+  res.type('text/xml');
+  res.send(twiml.toString());
 }
 
 const incomingCall = async (req, res) => {
@@ -280,14 +300,19 @@ const processVerification = async (req, res) => {
   	contentLanguage: config.contentLanguage,
   	}, async (jsonResponse)=>{
       console.log("createVoiceVerificationByUrl: ", jsonResponse.message);
-      var sid ;
+
       if (jsonResponse.responseCode == "SUCC") {
         speak(twiml, 'Verification successful! for user '+userId);
-        client.chat.services.create({friendlyName: 'friendly_name'})
-                    .then(service => sid = service.sid);
-        client.chat.services(sid)
-        .users.create({identity: 'vijay'}).then(speak(twiml,'Api done'));
-        speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
+        // speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
+        twiml.gather({
+          action    : '/enroll_user',
+          numDigits : 2,
+          timeout   : 5
+        }, function () {
+          this.say(
+            'You can now log in,before that press two for store user information'
+          );
+        });
         //Hang up
       } else if (numTries > 2) {
         //3 attempts failed
