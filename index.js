@@ -90,7 +90,7 @@ const getuserInfo = async (req, res) => {
   // console.log("getuserInfo ----->", req);
   console.log("getuserInfo body ----->", req.body);
   console.log("getuserInfo res ----->", res);
-  console.log("getuserInfo res body ---->", res.body);
+  // console.log("getuserInfo res body ---->", res.body);
   const twiml = new VoiceResponse();
   const gather = twiml.gather({
     input: 'speech',
@@ -99,6 +99,8 @@ const getuserInfo = async (req, res) => {
     timeout: 3,
   });
   speak(gather, "Please say your name to enroll");
+  res.type('text/xml');
+  res.send(twiml.toString());
 }
 
 const storeName = async (req, res) => {
@@ -111,6 +113,8 @@ const storeName = async (req, res) => {
   const twiml = new VoiceResponse();
   const command = req.body.SpeechResult.toLowerCase();
   twiml.say(`You said ${command}. I'll give you a ${command} fact.`);
+  res.type('text/xml');
+  res.send(twiml.toString());
 
   /*const phone = removeSpecialChars(req.body.From);
   let user = await User.findOne({ phone });
