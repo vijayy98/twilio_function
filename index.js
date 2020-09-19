@@ -36,7 +36,7 @@ express()
   .post('/verify', (req, res) => verify(req, res))
   .post('/process_verification', (req, res) => processVerification(req, res))
   .post('/enroll_user', (req,res) => getuserInfo(req, res))
-  .post('/store_name', (req, res, event) => storeName(req, res, event))
+  .post('/store_name', (req, res) => storeName(req, res))
   .listen(PORT, () => console.log(`Listening on port ${ PORT }`))
 
   // --------------------------------------------
@@ -89,16 +89,16 @@ const getAllUsers = async (req,res) => {
 const getuserInfo = async (req, res) => {
   const twiml = new VoiceResponse();
   const gather = twiml.gather({
-    input: 'speech dtmf',
+    input: 'speech',
+    hints: 'cat, numbers, chuck',
     action: '/store_name',
-    speechTimeout: 10
+    timeout: 3,
   });
   speak(gather, "Please say your name to enroll");
-  res.type('text/xml');
-  res.send(twiml.toString());
 }
 
-const storeName = async (req, res, event) => {
+const storeName = async (req, res) => {
+  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
   const phone = removeSpecialChars(req.body.From);
   let user = await User.findOne({ phone });
   user['name'] = "vijay";
