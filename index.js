@@ -87,12 +87,12 @@ const getAllUsers = async (req,res) => {
 
 const getuserInfo = async (req, res) => {
   const twiml = new VoiceResponse();
-  twiml.gather({
+  const gather = twiml.gather({
     input: 'speech',
-    timeout: 3,
-    // hints: 'cat, numbers, chuck norris',
-    action: '/store-name'
-  }).say('Please say your name to enroll')
+    action: '/store-name',
+    timeout: 5
+  });
+  speak(gather, "Please say your name to enroll");
 }
 
 const storeName = async (req, res) => {
@@ -101,10 +101,10 @@ const storeName = async (req, res) => {
   // user.name = req.SpeechResult.toLowerCase();
   // User.update(user);
   const twiml = new Twilio.twiml.VoiceResponse();
-  const command = req.SpeechResult.toLowerCase();
-  twiml.say(`You said your name is ${command}. hi ${command}`);
-  res.type('text/xml');
-  res.send(twiml.toString());
+  // const command = req.SpeechResult.toLowerCase(); ${command}. hi ${command}
+  speak(twiml, 'You said your name is vijay');
+  // res.type('text/xml');
+  // res.send(twiml.toString());
 }
 
 const incomingCall = async (req, res) => {
@@ -304,15 +304,12 @@ const processVerification = async (req, res) => {
       if (jsonResponse.responseCode == "SUCC") {
         speak(twiml, 'Verification successful! for user '+userId);
         // speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
-        twiml.gather({
-          action    : '/enroll_user',
-          numDigits : 2,
-          timeout   : 5
-        }, function () {
-          this.say(
-            'You can now log in,before that press two for store user information'
-          );
+        const gather = twiml.gather({
+          action: '/enroll_user',
+          numDigits: 2,
+          timeout: 5
         });
+        speak(gather, "You can now log in,before that press two for store user information");
         //Hang up
       } else if (numTries > 2) {
         //3 attempts failed
