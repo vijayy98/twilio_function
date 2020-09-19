@@ -13,9 +13,9 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const User = require("./model/users");
 
-const accountSid = 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-const authToken = 'your_auth_token';
-const client = require('twilio')(accountSid, authToken);
+// const accountSid = 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+// const authToken = 'your_auth_token';
+// const client = require('twilio')(accountSid, authToken);
 
 const request    = require('request');
 
