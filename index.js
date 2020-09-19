@@ -88,6 +88,7 @@ const getAllUsers = async (req,res) => {
 
 const getuserInfo = async (req, res) => {
   const twiml = new VoiceResponse();
+  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
   const gather = twiml.gather({
     input: 'speech',
     hints: 'cat, numbers, chuck',
@@ -98,17 +99,19 @@ const getuserInfo = async (req, res) => {
 }
 
 const storeName = async (req, res) => {
-  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
+
+  const twiml = new VoiceResponse();
   const phone = removeSpecialChars(req.body.From);
   let user = await User.findOne({ phone });
+  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!'+user.phone);
   user['name'] = "vijay";
   user['response'] = JSON.stringify(req.body);
-  User.update(user);
-  const twiml = new VoiceResponse();
+  await User.update(user);
   const command = req.SpeechResult.toLowerCase();
   speak(twiml, 'You said your name is '+command+'.hi'+command);
   res.type('text/xml');
   res.send(twiml.toString());
+
 }
 
 const incomingCall = async (req, res) => {
