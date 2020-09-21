@@ -12,8 +12,6 @@ const VoiceResponse = twilio.twiml.VoiceResponse;
 const express = require('express')
 const bodyParser = require('body-parser');
 const User = require("./model/users");
-const SpeechResult = require("./model/speech");
-const { json } = require('express');
 
 // Connect Database
 connectDB();
@@ -36,8 +34,6 @@ express()
   .post('/process_enrollment', (req, res) => processEnrollment(req, res))
   .post('/verify', (req, res) => verify(req, res))
   .post('/process_verification', (req, res) => processVerification(req, res))
-  .post('/enroll_user', (req,res) => getuserInfo(req, res))
-  .post('/store_name', (req, res) => storeName(req, res))
   .listen(PORT, () => console.log(`Listening on port ${ PORT }`))
 
   // --------------------------------------------
@@ -84,64 +80,6 @@ const getAllUsers = async (req,res) => {
             }
             console.log("returning users---------------------->",users)
             res.status(200).json(users);
-
-}
-
-const getuserInfo = async (req, res) => {
-  console.log("getuserInfo body ----->", req.body);
-  console.log("getuserInfo res ----->", res);
-  const twiml = new VoiceResponse();
-  const gather = twiml.gather({
-    input: 'speech',
-    action: '/store_name',
-    timeout: 3,
-  });
-  speak(gather, "Please say your name to enroll");
-  res.type('text/xml');
-  res.send(twiml.toString());
-}
-
-const storeName = async (req, res) => {
-
-  // console.log("storeName ----->", req);
-  console.log("storeName body ----->", req.body);
-  console.log("storeName res ----->", res);
-  // console.log("storeName res body ---->", res.body);
-
-  const twiml = new VoiceResponse();
-  const firstName = req.body.SpeechResult.toLowerCase();
-  const phone = removeSpecialChars(req.body.From);
-  const userId = await callerUserId(phone);
-  try{
-
-    speechResult = new SpeechResult({
-        userId : userId,
-        description: firstName
-    });
-    console.log("before save speechResult ---->", speechResult);
-    let speechResult2 =  await speechResult.save();
-    console.log("after save speechResult2 ---->", speechResult2);
-
-  }catch(err){
-    console.error(err);
-    res.send("Error " + err);
-  }
-
-  twiml.say(`You said your name is ${firstName}. hai ${firstName} have a nice day`);
-  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
-  res.type('text/xml');
-  res.send(twiml.toString());
-
-  /*const phone = removeSpecialChars(req.body.From);
-  let user = await User.findOne({ phone });
-  speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!'+user.phone);
-  user.name = "vijay";
-  user.response = JSON.stringify(req.body);
-  await User.update(user);
-  const command = req.body.SpeechResult.toLowerCase();
-  speak(twiml, 'You said your name is '+command+'.hi'+command);
-  res.type('text/xml');
-  res.send(twiml.toString());*/
 
 }
 
@@ -325,12 +263,6 @@ const verify = async (req, res) => {
 
 // Process Verification
 const processVerification = async (req, res) => {
-  
-  console.log("processVerification ----->", req);
-  console.log("processVerification body ----->", req.body);
-  console.log("processVerification res ----->", res);
-  console.log("processVerification res body ---->", res.body);
-
   const userId = await callerUserId(removeSpecialChars(req.body.From));
   const recordingURL = req.body.RecordingUrl + '.wav';
   const twiml = new VoiceResponse();
@@ -347,13 +279,7 @@ const processVerification = async (req, res) => {
 
       if (jsonResponse.responseCode == "SUCC") {
         speak(twiml, 'Verification successful! for user '+userId);
-        // speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
-        const gather = twiml.gather({
-          action: '/enroll_user',
-          numDigits: 2,
-          timeout: 3
-        });
-        speak(gather, "You can now log in,before that press two for store user information");
+        speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
         //Hang up
       } else if (numTries > 2) {
         //3 attempts failed
