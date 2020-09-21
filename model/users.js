@@ -12,10 +12,12 @@ const UserSchema = new mongoose.Schema({
     },
     name: {
         type: String,
+        required: true,
+        unique: true,
     },
     // response: {
     //     type: String,
     // }
 });
 
-module.exports = mongoose.model("users", UserSchema);
+module.exports = mongoose.model("users-name", UserSchema);

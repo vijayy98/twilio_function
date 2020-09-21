@@ -24,6 +24,8 @@ connectDB();
 
 const PORT = process.env.PORT || 5000
 
+var usersName = ["vijay","venkat","dhina","thomas"];
+
 express()
   .use(bodyParser.urlencoded({extended: true}))
   .use(bodyParser.json())
@@ -51,20 +53,23 @@ var callerUserIdOLD = function(body) {
 };
 
 const callerUserId = async (phone) => {
-  try {
-    // const client = await pool.connect()
-    // const result = await client.query('SELECT userId FROM users where phone=\'' + phone + '\'');
-    // client.release();
+  try {;
     let user = await User.findOne({ phone });
+      if (user) {
+          return user.userId;
+      }
+  } catch (err) {
+      console.error(err);
+  }
+  return 0
+};
 
-            if (user) {
-                return user.userId;
-            }
-
-    // Check for user in db
-    // if (Object.keys(result.rows).length !== 0) {
-    //   return result.rows[0].userid;
-    // }
+const callerName = async (phone) => {
+  try {;
+    let user = await User.findOne({ phone });
+      if (user) {
+          return user;
+      }
   } catch (err) {
       console.error(err);
   }
@@ -113,9 +118,12 @@ const incomingCall = async (req, res) => {
       myVoiceIt.createUser(async (jsonResponse)=>{
         speak(twiml, "Welcome to the Voice It Verification Demo, you are a new user and will now be enrolled");
         try {
+          var finalName = usersName[Math.floor(Math.random() * Math.floor(usersName.length))].concat("-").concat(makeid())
+          console.log("finalName ------>", finalName);
           user1 = new User({
             userId : jsonResponse.userId,
-            phone: phone
+            phone: phone,
+            name: finalName
         });
         await user1.save();
           // const client = await pool.connect()
@@ -278,7 +286,9 @@ const processVerification = async (req, res) => {
       console.log("createVoiceVerificationByUrl: ", jsonResponse.message);
 
       if (jsonResponse.responseCode == "SUCC") {
-        speak(twiml, 'Verification successful! for user '+userId);
+        let userObj = callerName(removeSpecialChars(req.body.From));
+        console.log("userobj ------>", userObj);
+        speak(twiml, 'hai'+userObj.name+'your Verification successful!');
         speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
         //Hang up
       } else if (numTries > 2) {
@@ -327,4 +337,14 @@ function speak(twiml, textToSpeak, contentLanguage = "en-US"){
 
 function removeSpecialChars(text){
   return text.replace(/[^0-9a-z]/gi, '');
+}
+
+function makeid() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 3; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
 }
