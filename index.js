@@ -288,7 +288,7 @@ const processVerification = async (req, res) => {
       console.log("createVoiceVerificationByUrl: ", jsonResponse.message);
 
       if (jsonResponse.responseCode == "SUCC") {
-        let userObj = callerName(removeSpecialChars(req.body.From));
+        let userObj = await callerName(removeSpecialChars(req.body.From));
         console.log("username ------>", userObj['name']);
         console.log("username ------>", userObj.name);
         speak(twiml, 'hai '+userObj.name+' your Verification successful!');
