@@ -326,10 +326,8 @@ const verify = async (req, res) => {
 // Process Verification
 const processVerification = async (req, res) => {
   
-  console.log("processVerification ----->", req);
   console.log("processVerification body ----->", req.body);
   console.log("processVerification res ----->", res);
-  console.log("processVerification res body ---->", res.body);
 
   const userId = await callerUserId(removeSpecialChars(req.body.From));
   const recordingURL = req.body.RecordingUrl + '.wav';
