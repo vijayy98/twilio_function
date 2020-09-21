@@ -53,9 +53,10 @@ var callerUserIdOLD = function(body) {
 };
 
 const callerUserId = async (phone) => {
-  try {;
+  try {
     let user = await User.findOne({ phone });
       if (user) {
+        console.log("db user id----->", user.userId)
           return user.userId;
       }
   } catch (err) {
@@ -65,9 +66,10 @@ const callerUserId = async (phone) => {
 };
 
 const callerName = async (phone) => {
-  try {;
+  try {
     let user = await User.findOne({ phone });
       if (user) {
+        console.log("db user----->", user)
           return user;
       }
   } catch (err) {
@@ -118,7 +120,7 @@ const incomingCall = async (req, res) => {
       myVoiceIt.createUser(async (jsonResponse)=>{
         speak(twiml, "Welcome to the Voice It Verification Demo, you are a new user and will now be enrolled");
         try {
-          var finalName = usersName[Math.floor(Math.random() * Math.floor(usersName.length))].concat("-").concat(makeid())
+          var finalName = usersName[Math.floor(Math.random() * Math.floor(usersName.length))].concat(" ").concat(makeid())
           console.log("finalName ------>", finalName);
           user1 = new User({
             userId : jsonResponse.userId,
@@ -287,6 +289,7 @@ const processVerification = async (req, res) => {
 
       if (jsonResponse.responseCode == "SUCC") {
         let userObj = callerName(removeSpecialChars(req.body.From));
+        console.log("username ------>", userObj['name']);
         console.log("username ------>", userObj.name);
         speak(twiml, 'hai '+userObj.name+' your Verification successful!');
         speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
