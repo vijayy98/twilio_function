@@ -288,7 +288,7 @@ const processVerification = async (req, res) => {
       if (jsonResponse.responseCode == "SUCC") {
         let userObj = callerName(removeSpecialChars(req.body.From));
         console.log("username ------>", userObj.name);
-        speak(twiml, 'hai'+userObj.name+'your Verification successful!');
+        speak(twiml, 'hai '+userObj.name+' your Verification successful!');
         speak(twiml,'Thank you for calling voice its voice biometrics demo. Have a nice day!');
         //Hang up
       } else if (numTries > 2) {
