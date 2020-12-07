@@ -13,7 +13,7 @@ const config = {
   apiKey : "key_ba9cbb9b470f464d8f2b51fcd5f39a69",
   apiToken : "tok_2b3c5b15c8664b32a3cb241607ffe3c5",
   contentLanguage:"en-IN",
-  chosenVoicePrintPhrase:"my face and voice identify me"
+  chosenVoicePrintPhrase:"Hello I am very happy today"
 }
 
 module.exports = config;
