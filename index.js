@@ -345,6 +345,9 @@ const saveUser =async (req,res) => {
         name: name,
       });
       await user1.save();
+      res.type("application/json")
+      res.status(200);
+      res.send({ redirect:"",phone: phone,userId: jsonResponse.userId})
       // const client = await pool.connect()
       // const result = await client.query('insert into users values ('+ phone +', \'' + jsonResponse.userId + '\')');
       // client.release();
